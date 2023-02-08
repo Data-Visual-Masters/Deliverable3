@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 ```{r}
-link='https://github.com/Data-Visual-Masters/Deliverable3/blob/main/Report_Card_Graduation_2021-22.csv'
+link='https://github.com/Data-Visual-Masters/Deliverable3/raw/main/Report_Card_Graduation_2021-22.csv'
 
 schooldata=read.csv(link)
 ```
