@@ -11,4 +11,15 @@ schooldata=read.csv(link)
 ```{r}
 str(schooldata)
 ```
+```{r}
+(tableFreq=as.data.frame(schooldata))
+```
+create category limits for graduation rate, recode for correct interpretation
+
+link map, library(sf), merge with data
+
+Call ggplot2 to create base map, add data layer, customize colors
+
+Add titles, captions, annotations
+
 
