@@ -14,12 +14,28 @@ str(schooldata)
 ```{r}
 (tableFreq=as.data.frame(schooldata))
 ```
-create category limits for graduation rate, recode for correct interpretation
+##create category limits for graduation rate, recode for correct interpretation
 
-link map, library(sf), merge with data
+##link map, library(sf), merge with data
 
-Call ggplot2 to create base map, add data layer, customize colors
+```{r}
+linkMap="https://github.com/Data-Visual-Masters/Deliverable3/raw/main/Washington_State_Public_Schools.geojson"
 
-Add titles, captions, annotations
+library(sf)
+```
+```{r}
+schoolsmap=read_sf(linkMap)
+```
+
+```{r}
+head(schoolsmap)
+```
+```{r}
+schoolsmap_indexes=merge(schoolsmap, schooldata)
+```
+
+##Call ggplot2 to create base map, add data layer, customize colors
+
+##Add titles, captions, annotations
 
 
