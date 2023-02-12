@@ -35,6 +35,14 @@ schoolsmap_indexes=merge(schoolsmap, schooldata)
 ```
 
 ##Call ggplot2 to create base map, add data layer, customize colors
+```{r}
+library(ggplot2)
+
+baseMap= ggplot(data=schoolsmap) + theme_classic() + geom_sf(fill = 'grey', color=NA)
+
+baseMap
+```
+
 
 ##Add titles, captions, annotations
 
