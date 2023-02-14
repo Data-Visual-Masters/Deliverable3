@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Deliverable 3: Spatial Data"
 output: html_notebook
 ---
 ```{r}
@@ -16,19 +16,20 @@ str(schooldata)
 ```
 ##create category limits for graduation rate, recode for correct interpretation
 
-##link map, library(sf), merge with data
+##link states map, library(sf)
 
 ```{r}
-linkMap="https://github.com/Data-Visual-Masters/Deliverable3/raw/main/Washington_State_Public_Schools.geojson"
+linkMap="https://github.com/Data-Visual-Masters/Deliverable3/raw/main/US_States_Map.json"
 
 library(sf)
 ```
 ```{r}
-schoolsmap=read_sf(linkMap)
+USmap=read_sf(linkMap)
 ```
 
+#See data in map
 ```{r}
-head(schoolsmap)
+head(USmap)
 ```
 ```{r}
 schoolsmap_indexes=merge(schoolsmap, schooldata)
@@ -38,7 +39,7 @@ schoolsmap_indexes=merge(schoolsmap, schooldata)
 ```{r}
 library(ggplot2)
 
-baseMap= ggplot(data=schoolsmap) + theme_classic() + geom_sf(fill = 'grey', color=NA)
+baseMap= ggplot(data=USmap) + theme_classic() + geom_sf(fill = 'grey', color=NA)
 
 baseMap
 ```
