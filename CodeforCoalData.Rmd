@@ -1,0 +1,29 @@
+---
+title: "Test: Deliverable 3"
+output: html_notebook
+---
+
+#Linking in the data
+```{r}
+link='https://github.com/Data-Visual-Masters/Deliverable3/raw/main/Coal_Production_State.csv'
+
+coaldata=read.csv(link)
+```
+
+#Viewing the data
+```{r}
+str(coaldata)
+```
+#Create a data frame
+
+```{r}
+(tableFreq=as.data.frame(coaldata))
+```
+
+
+```{r}
+library(usmap)
+library(ggplot2)
+
+plot_usmap (regions = "states")
+```
