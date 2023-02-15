@@ -27,3 +27,23 @@ library(ggplot2)
 
 plot_usmap (regions = "states")
 ```
+```{r}
+linkMap="https://github.com/Data-Visual-Masters/Deliverable3/raw/main/gz_2010_us_040_00_5m%20(1).json"
+
+library(sf)
+```
+```{r}
+coalmap=read_sf(linkMap)
+```
+
+```{r}
+coalusmap_indexes=merge(coalmap, coaldata, by='NAME')
+```
+
+```{r}
+library(ggplot2)
+
+baseMap= ggplot(data=coalmap) + theme_classic() + geom_sf(fill='grey', color=NA)
+
+baseMap
+```
