@@ -1,0 +1,152 @@
+---
+title: "Test: Deliverable 3"
+output: html_notebook
+---
+
+#Linking in the data
+```{r}
+link='https://github.com/Data-Visual-Masters/Deliverable3/raw/main/Coal_Production_State.csv'
+
+
+coaldata=read.csv(link)
+```
+
+#load necessary libraries
+```{r}
+#install.packages('usmap')
+library(usmap)
+library(dplyr)
+library(readr)
+```
+
+
+#Viewing the data
+```{r}
+str(coaldata)
+```
+#Create a data frame
+
+```{r}
+(coalTable=as.data.frame(coaldata))
+```
+
+
+```{r}
+library(usmap)
+library(ggplot2)
+
+plot_usmap (regions = "states")
+```
+```{r}
+linkMap="https://github.com/PublicaMundi/MappingAPI/raw/master/data/geojson/us-states.json"
+
+library(sf)
+```
+
+```{r}
+#uncomment if using first way of making map instead of second
+#coalmap=read_sf(linkMap)
+```
+
+```{r}
+#rename column header for merge in next block
+names(coalmap)[names(coalmap) == "name"] <- "NAME"
+head(coalmap)
+```
+
+
+```{r}
+coalusmap_indexes=merge(coalmap, coalTable, by='NAME')
+```
+
+```{r}
+#first way to create map that prof uses
+library(ggplot2)
+
+baseMap= ggplot(data=coalmap) + theme_classic() + 
+         geom_sf(fill='grey',color=NA) +
+          coord_sf(ndiscr = F)
+
+baseMap 
+```
+
+```{r}
+#rename index column to work with usmap
+names(coalusmap_indexes)[names(coalusmap_indexes) == "id"] <- "fips"
+head(coalusmap_indexes)
+```
+
+
+```{r}
+#second way using usmap package instead
+
+plot_usmap(data = coalusmap_indexes, values = "X2015", color = "black") + 
+  scale_fill_continuous(low = 'green', high = 'red', name = "Coal Production (2015)", label = scales::comma) + 
+  theme(legend.position = "right")
+```
+#trying same code above but with new CO2 dataset
+```{r}
+link='https://github.com/Data-Visual-Masters/Deliverable3/raw/main/state_percapita_CO2emissions.csv'
+
+
+carbondata=read.csv(link)
+```
+#Viewing the data
+```{r}
+str(carbondata)
+```
+#Create a data frame
+
+```{r}
+(carbonTable=as.data.frame(carbondata))
+```
+
+```{r}
+carbonmap=read_sf(linkMap)
+```
+
+
+```{r}
+carbonindex=merge(carbonmap, carbonTable, by='name')
+```
+
+```{r}
+#rename state name column to work with usmap
+names(carbonindex)[names(carbonindex) == "name"] <- "state"
+head(carbonindex)
+```
+
+```{r}
+#cant graph percent values so this command turns it into numerical
+  carbonindex$Percent = parse_number(carbonindex$Percent)
+         
+```
+
+```{r}
+#add variable that allows state labeling in map
+
+highstate <- data.frame(
+  stringsAsFactors = FALSE,
+             state = c("Alaska", "North Dakota", "Wyoming"),
+              stateabbr = c('AK', 'ND', 'WY'),
+              fips = c("02", "38", "56"))
+
+# Get centroids
+centroid_labels <- usmapdata::centroid_labels("states")
+
+# Join centroids to data
+state_labels <- merge(highstate, centroid_labels, by = "fips")
+```
+
+
+```{r}
+#second way using usmap package instead
+
+plot_usmap(data = carbonindex, values = "Percent", color = "black") +
+  geom_text(data = state_labels, aes(x = x, y = y, label = stateabbr,), color = "black") +
+  labs(title = "CO2 Emissions in the United States",
+       caption = "",
+       fill = "Count") +
+  scale_fill_gradient2(low = '#008000', mid = 'yellow', high = 'red', midpoint = 50, name = "Per Capita % CO2 Emissions Change (1970-2020)", label = scales::comma) + 
+  theme(legend.position = "right")
+```
