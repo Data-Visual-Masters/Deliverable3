@@ -1,0 +1,104 @@
+---
+title: 'Test: Deliverable 3'
+output:
+  html_document:
+    df_print: paged
+---
+
+#load necessary libraries
+```{r}
+#install.packages('usmap')
+library(usmap)
+library(dplyr)
+library(readr)
+```
+
+
+```{r}
+library(usmap)
+library(ggplot2)
+
+plot_usmap (regions = "states")
+```
+```{r}
+linkMap="https://github.com/PublicaMundi/MappingAPI/raw/master/data/geojson/us-states.json"
+
+library(sf)
+```
+
+```{r}
+link='https://github.com/Data-Visual-Masters/Deliverable3/raw/main/state_percapita_CO2emissions.csv'
+
+
+carbondata=read.csv(link)
+```
+#Viewing the data
+```{r}
+str(carbondata)
+```
+#Create a data frame
+
+```{r}
+(carbonTable=as.data.frame(carbondata))
+```
+
+#read in geojson mapfile found on github and assign it
+```{r}
+carbonmap=read_sf(linkMap)
+```
+
+```{r}
+#rename state name column to make merge below work
+names(carbonTable)[names(carbonTable) == "State"] <- "name"
+head(carbonTable)
+```
+
+```{r}
+carbonindex=merge(carbonmap, carbonTable, by='name')
+```
+
+```{r}
+#rename state name column to work with usmap
+names(carbonindex)[names(carbonindex) == "name"] <- "state"
+head(carbonindex)
+```
+
+```{r}
+#cant graph percent values so this command turns it into numerical
+  carbonindex$Percent = parse_number(carbonindex$Percent)
+         
+```
+
+```{r}
+#add variable that allows state labeling in map
+
+highstate <- data.frame(
+  stringsAsFactors = FALSE,
+             state = c("Alaska", "North Dakota", "Wyoming"),
+              stateabbr = c('AK', 'ND', 'WY'),
+              fips = c("02", "38", "56"))
+
+# Get centroids
+centroid_labels <- usmapdata::centroid_labels("states")
+
+# Join centroids to data
+state_labels <- merge(highstate, centroid_labels, by = "fips")
+```
+
+
+```{r}
+#second way using usmap package instead
+
+plot_usmap(data = carbonindex, values = "Percent", color = "black") +
+    #adds state abbr labels
+  geom_text(data = state_labels, aes(x = x, y = y, label = stateabbr,), color = "black") +
+  labs(title = "CO2 Emissions in the United States",
+       caption = "",
+       fill = "Count") +
+  scale_fill_gradient2(low = '#008000', mid = 'yellow', high = 'red', midpoint = 50, name = "Per Capita % CO2 Emissions Change (1970-2020)", 
+            #adds labels to legend           
+          labels = c("0%", "100%"),
+           breaks = c(0, 100)) + 
+  #puts box around map, cleans up presentation
+  theme(legend.position = "bottom", panel.background = element_rect(color='black'), legend.key.size = unit(0.4, "cm"), plot.title = element_text(size=14))
+```
